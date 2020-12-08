@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "pdf": "shower pdf",
+    "serve": "shower serve",
+    "archive": "shower archive",
+    "prepare": "shower prepare",
+    "publish": "shower publish"
+  },
+  "dependencies": {
+    "@shower/core": "^3.0.0",
+    "@shower/material": "^2.3.0",
+    "highlight.js": "^10.4.1"
+  },
+  "devDependencies": {
+    "@shower/cli": "^0.3.0"
+  }
+}

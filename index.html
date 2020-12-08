@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>React Functional Components</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="node_modules/@shower/material/styles/styles.css">
+    <link rel="stylesheet" href="node_modules/highlight.js/styles/stackoverflow-light.css" />
+<!--    <link rel="stylesheet" href="node_modules/highlight.js/styles/atom-one-light.css" />-->
+<!--    <link rel="stylesheet" href="node_modules/highlight.js/styles/a11y-light.css" />-->
+    <style>
+        .shower {
+            --slide-ratio: calc(16 / 9);
+        }
+        code {
+	        font-size: 10px;
+        }
+    </style>
+</head>
+<body class="shower list">
+
+    <header class="caption">
+        <h1>Функциональные компоненты в React</h1>
+        <p>особенности и различия с классовыми</p>
+    </header>
+
+    <section class="slide">
+        <h2>Проблемы</h2>
+<!--        мы часто видим большой объект стейта в классовом компоненте, исходя из этого растет логика управления этим состоянием-->
+<!--        инструменты, которые нужны для переиспользования логики: hoc, render props - со временем растет сложность-->
+<!--        путаница с this и не только, иногда бывает, что приходится дублировать логику в cdm и cdu, cdu включает большую логику обработки входящих и предыдущих пропсов-->
+        <ul>
+            <li>Желание уместить большую логику в компонент</li>
+            <li>Со временем компоненты становятся трудными для понимания</li>
+            <li>Тяжело переиспользовать логику</li>
+            <li>Путаница с this (коммент: без которой можно обойтись, об этом позже)</li>
+        </ul>
+    </section>
+
+    <section class="slide">
+        <h2>Паттерн Presentational-Container</h2>
+<!--        Контейнеры отвечали за:-->
+<!--        - то как работает компонент-->
+<!--        - обычно не возвращают dom-->
+<!--        - провайдят данные в презентационные-->
+<!--        - как правило обернуты/являются оберткой hoc-->
+
+<!--        презенатционные :-->
+<!--        - отвечали за визуализацию-->
+<!--        - не имеют подвязок с общей логикой приложения-->
+<!--        - не мутируют данные и не распределяют их-->
+<!--        - написаны на функциональных компонентах, у которых нет стейта, методов жц и тд.-->
+        <div class="columns two">
+            <pre>
+                <code class="language-js">
+// Container
+import React from "react";
+import CommentList from "./CommentList";
+
+class CommentListContainer extends React.Component {
+  state = { comments: [] }
+
+  componentDidMount() {
+    fetch("/my-comments.json")
+      .then(res => res.json())
+      .then(comments => this.setState({ comments }))
+  }
+
+  render() {
+    return &lt;CommentList comments={this.state.comments} />;
+  }
+}
+                </code>
+            </pre>
+            <pre>
+                <code class="language-js">
+// View
+import React from "react";
+
+const Commentlist = comments => (
+  &lt;ul&gt;
+    {comments.map(({ body, author }) =>
+      &lt;li&gt;{body}-{author}&lt;/li&gt;
+    )}
+  &lt;/ul&gt;
+)
+                </code>
+            </pre>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div>Теперь</div>
+        <pre>
+            <code class="language-js">
+const AvailablePages = ({count, theme, alreadyRegistered}) =&gt; {
+    <mark>const [toggle, setToggle] = useState(false);</mark>
+    <mark>const translation = useContext(Translation);</mark>
+    const handleClick = () =&gt; setToggle(!toggle);
+    return (
+        &lt;Container toggle={toggle}&gt;
+            &lt;Close onClick={handleClick}&gt;
+                &lt;img src={theme.icons.close} alt=&quot;&quot;/&gt;
+            &lt;/Close&gt;
+            &lt;Title&gt;
+                {translation.available} &lt;Count&gt;{count}&lt;/Count&gt;
+            &lt;/Title&gt;
+            {!alreadyRegistered &amp;&amp;
+                &lt;Text&gt;{translation.recognizeMore} &lt;a href=&quot;/register/&quot;&gt;Sign Up&lt;/a&gt;&lt;/Text&gt;
+            }
+        &lt;/Container&gt;
+    )
+};
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide">
+        <h2>Нативные хуки</h2>
+        <div class="columns two">
+            <ul>
+                <li>useState</li>
+                <li>useEffect</li>
+                <li>useLayoutEffect</li>
+                <li>useContext</li>
+                <li>useRef</li>
+            </ul>
+            <ul>
+                <li>useReducer</li>
+                <li>useCallback</li>
+                <li>useMemo</li>
+                <li>useImperativeHandle</li>
+                <li>useDebugValue</li>
+            </ul>
+        </div>
+    </section>
+
+
+    <section class="slide">
+        <h3>Функциональные компоненты фиксируют значения, необходимые для рендера</h3>
+        <div>sandbox example</div>
+    </section>
+
+    мы сделаем кнопку, которая симулирует запрос на сервер и при завершении покажет алерт.
+    например, если мы подписались на Дэна - должно вывестись "Подписка на Дэна", через три секунды
+
+
+    легко предположить, что эти два сниппета кода эквивалентны,
+    но при рефакторинге с классовых на фк и наоборот,
+    могут возникнуть непредвиденные последствия
+
+    Однако эти два фрагмента немного отличаются. Видите ли вы разницу?
+
+    следует заметить, что данный пример никак не связан с хуками, это все про разницу между функциями и классами в react,
+    и если вы планируете дальше использовать функции необходимо эту разницу понять
+
+    //часть с примером//
+
+    в реализации этого класса явно есть ошибки
+    посмотрим на метод showMessage
+    этот метод читает из this.props.user, в реакте пропсы иммутабельны, значит они измениться не могут
+    но не this, он всегда был и является мутабельным
+    реакт мутирует его постоянно для своих нужд, но при этом мы можем взять акутальную версию в рендер методе или в методах жц
+    поэтому, когда компонент выполняет перерендер пока идет запрос - this.props меняется
+    и наш метод showMessage получает юзера уже из обновленной версии пропсов
+
+    Разработчики реакта раскрыли интересное наблюдение о природе пользовательских интерфейсов. То есть, если мы говорим, что ui концептуально является функцией текущего состояния приложения, обработчики событий точно так же являются частью результата рендеринга, как и визуальный вывод. Наши обработчики событий «принадлежат» определенному рендеру с определенными свойствами и состоянием.
+
+    Однако планирование тайм-аута, обратный вызов которого читает this.props, нарушает эту связь. Наш обратный вызов showMessage не «привязан» к какому-либо конкретному рендеру, поэтому он «теряет» правильные свойства. Чтение из этого разорвало эту связь.
+
+    Допустим, функциональных компонентов не существовало. Как бы мы решили эту проблему?
+
+    Мы хотели бы каким-то образом «восстановить» связь между рендером с правильными реквизитами и обратным вызовом showMessage, который их читает. Где-то по пути теряется реквизит.
+
+    Один из способов сделать это - прочитать this.props на ранней стадии события, а затем явно передать их в обработчик завершения тайм-аута:
+
+    пример
+
+    это будет работать. но со временем могут возникнуть похожие проблемы.
+    что если нам нужно прочитать не только один пропс?
+    что если нам также нужен доступ к текущему стейту?
+
+    если showMessage вызовет другой метод, а в нем мы опять будем читать из this.props.something или this.state.something - мы опять столкнемся с этой проблемой
+
+    Таким образом, нам пришлось бы передавать this.props и this.state в качестве аргументов через каждый метод, вызываемый из showMessage.
+
+    Также, заинлайнив алерт в handleClick мы не решим эту проблему. Мы же хотим структурировать код таким образом, чтобы можно было разделить его на несколько методов, а также прочитать пропсы и состояние, которые соответствуют рендерингу, связанному с этим вызовом.
+
+    Однако проблема исчезла бы, если бы мы полностью полагались на замыкание в JavaScript.
+
+    Замыканий часто избегают, потому что трудно держать в голове значение, которое может изменяться со временем. но пропсы и стейт в реакте иммутабельны, что облегчает нам задачу
+
+    То есть, если мы замыкаем props или стейт из определенного рендера, то всегда можем рассчитывать, что они останутся точно такими же (актуальными):
+
+    //пример логики в рендере//
+    
+
+
+
+<!--    function ProfilePage(props) {-->
+<!--        const showMessage = () => {-->
+<!--            alert('Followed ' + props.user);-->
+<!--        };-->
+<!--    -->
+<!--        const handleClick = () => {-->
+<!--            setTimeout(showMessage, 3000);-->
+<!--        };-->
+<!--    -->
+<!--        return (-->
+<!--            <button onClick={handleClick}>Follow</button>-->
+<!--        );-->
+<!--    }-->
+
+<!--    class ProfilePage extends React.Component {-->
+<!--        showMessage = () => {-->
+<!--            alert('Followed ' + this.props.user);-->
+<!--        };-->
+<!--    -->
+<!--        handleClick = () => {-->
+<!--            setTimeout(this.showMessage, 3000);-->
+<!--        };-->
+<!--    -->
+<!--        render() {-->
+<!--            return <button onClick={this.handleClick}>Follow</button>;-->
+<!--        }-->
+<!--    }-->
+
+    return (
+    <button onClick={handleClick}>Follow</button>
+    );
+    }
+
+    <div class="progress"></div>
+
+    <script src="node_modules/@shower/core/dist/shower.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.1/highlight.min.js"></script>
+    <script>
+        hljs.initHighlightingOnLoad();
+    </script>
+    <!-- Copyright © 2020 Yours Truly, Famous Inc. -->
+</body>
+</html>
