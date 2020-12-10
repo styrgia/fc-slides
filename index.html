@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="node_modules/@shower/material/styles/styles.css">
     <link rel="stylesheet" href="node_modules/highlight.js/styles/stackoverflow-light.css" />
-<!--    <link rel="stylesheet" href="node_modules/highlight.js/styles/atom-one-light.css" />-->
-<!--    <link rel="stylesheet" href="node_modules/highlight.js/styles/a11y-light.css" />-->
     <style>
         .shower {
             --slide-ratio: calc(16 / 9);
@@ -25,15 +23,21 @@
     </header>
 
     <section class="slide">
+        <figure>
+            <img class="cover" src="images/cover.png" alt="Picture placeholder.">
+        </figure>
+    </section>
+
+    <section class="slide">
         <h2>Проблемы</h2>
 <!--        мы часто видим большой объект стейта в классовом компоненте, исходя из этого растет логика управления этим состоянием-->
 <!--        инструменты, которые нужны для переиспользования логики: hoc, render props - со временем растет сложность-->
 <!--        путаница с this и не только, иногда бывает, что приходится дублировать логику в cdm и cdu, cdu включает большую логику обработки входящих и предыдущих пропсов-->
         <ul>
-            <li>Желание уместить большую логику в компонент</li>
-            <li>Со временем компоненты становятся трудными для понимания</li>
-            <li>Тяжело переиспользовать логику</li>
-            <li>Путаница с this (коммент: без которой можно обойтись, об этом позже)</li>
+            <li class="next">Желание уместить большую логику в компонент</li>
+            <li class="next">Со временем компоненты становятся трудными для понимания</li>
+            <li class="next">Тяжело переиспользовать логику</li>
+            <li class="next">THIS</li>
         </ul>
     </section>
 
@@ -51,7 +55,7 @@
 <!--        - не мутируют данные и не распределяют их-->
 <!--        - написаны на функциональных компонентах, у которых нет стейта, методов жц и тд.-->
         <div class="columns two">
-            <pre>
+            <pre class="next">
                 <code class="language-js">
 // Container
 import React from "react";
@@ -72,7 +76,7 @@ class CommentListContainer extends React.Component {
 }
                 </code>
             </pre>
-            <pre>
+            <pre class="next">
                 <code class="language-js">
 // View
 import React from "react";
@@ -119,13 +123,13 @@ const AvailablePages = ({count, theme, alreadyRegistered}) =&gt; {
         <h2>Нативные хуки</h2>
         <div class="columns two">
             <ul>
-                <li>useState</li>
-                <li>useEffect</li>
-                <li>useLayoutEffect</li>
-                <li>useContext</li>
-                <li>useRef</li>
+                <li class="next">useState</li>
+                <li class="next">useEffect</li>
+                <li class="next">useContext</li>
+                <li class="next">useRef</li>
+                <li class="next">useLayoutEffect</li>
             </ul>
-            <ul>
+            <ul class="next">
                 <li>useReducer</li>
                 <li>useCallback</li>
                 <li>useMemo</li>
@@ -138,7 +142,6 @@ const AvailablePages = ({count, theme, alreadyRegistered}) =&gt; {
 
     <section class="slide">
         <h3>Функциональные компоненты фиксируют значения, необходимые для рендера</h3>
-        <div>sandbox example</div>
     </section>
 
     мы сделаем кнопку, которая симулирует запрос на сервер и при завершении покажет алерт.
@@ -193,7 +196,7 @@ const AvailablePages = ({count, theme, alreadyRegistered}) =&gt; {
     То есть, если мы замыкаем props или стейт из определенного рендера, то всегда можем рассчитывать, что они останутся точно такими же (актуальными):
 
     //пример логики в рендере//
-    
+
 
 
 
@@ -225,18 +228,11 @@ const AvailablePages = ({count, theme, alreadyRegistered}) =&gt; {
 <!--        }-->
 <!--    }-->
 
-    return (
-    <button onClick={handleClick}>Follow</button>
-    );
-    }
-
     <div class="progress"></div>
-
     <script src="node_modules/@shower/core/dist/shower.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.1/highlight.min.js"></script>
     <script>
         hljs.initHighlightingOnLoad();
     </script>
-    <!-- Copyright © 2020 Yours Truly, Famous Inc. -->
 </body>
 </html>
