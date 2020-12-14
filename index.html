@@ -123,7 +123,10 @@ const AvailableСount = ({count, theme, alreadyRegistered}) =&gt; {
 
     <section class="slide">
         <h2>Сравнение сборок</h2>
-<!--        -->
+        <div class="columns two">
+            <img class="next" style="object-fit: contain; max-width: 140%; margin-right: 30px;" src="./images/buildClass.png" alt="">
+            <img class="next" style="object-fit: contain; max-width: 500px; margin: 0;" src="./images/buildFunction.png" alt="">
+        </div>
     </section>
 
     <section class="slide">
@@ -196,6 +199,50 @@ const Example: FC = () => {
         <pre>
             <code>
 
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide">
+        <h2>То, что не поддерживается</h2>
+        <pre><code style="font-size: 14px;">componentDidCatch(error, info)</code></pre>
+        <p>Этот метод жизненного цикла вызывается после возникновения ошибки у компонента-потомка. В нем можно использовать побочные эффекты.</p>
+        <p>Например для логирования ошибок (sentry) или смены состояния и отрисовки запасного ui</p>
+    </section>
+
+    <section class="slide">
+        <pre><code style="font-size: 14px;">static getDerivedStateFromError()</code></pre>
+        <p>Вызывается после возникновения ошибки у компонента-родителя.</p>
+        <p>Он получает ошибку в качестве параметра и возвращает значение для обновления состояния. </p>
+    </section>
+
+    <section class="slide">
+        <pre>
+            <code style="font-size: 10px;">
+class DefaultLayout extends Component {
+    state = {
+        hasError: false,
+        errorMessage: '',
+    };
+    <mark>static getDerivedStateFromError() {</mark>
+        return { hasError: true };
+    }
+    <mark>componentDidCatch(error: Error) {</mark>
+        this.setState({ errorMessage: error.message || 'Произошла ошибка' });
+    }
+    render() {
+        return (
+            ...
+            {this.state.hasError ? (
+                &lg;ErrorMessageElement>
+                    {this.state.errorMessage}
+                &lg;/ErrorMessageElement>
+            ) : (
+                children
+            )}
+        );
+    }
+}
             </code>
         </pre>
     </section>
