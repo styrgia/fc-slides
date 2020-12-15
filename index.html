@@ -6,17 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="node_modules/@shower/material/styles/styles.css">
     <link rel="stylesheet" href="node_modules/highlight.js/styles/stackoverflow-light.css" />
-    <style>
-        .shower {
-            --slide-ratio: calc(16 / 9);
-        }
-        code {
-	        font-size: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body class="shower list">
-
     <header class="caption">
         <h1>Функциональные компоненты в React</h1>
         <p>особенности и различия с классовыми</p>
@@ -24,7 +16,7 @@
 
     <section class="slide">
         <figure>
-            <img class="cover" src="images/cover.png" alt="Picture placeholder.">
+            <img class="cover" style="height: 100%;" src="images/cover.png" alt="Picture placeholder.">
         </figure>
     </section>
 
@@ -40,12 +32,13 @@
 
     <section class="slide">
         <h2>Мотивация</h2>
-        <ol>
+        <ul>
             <li class="next">Меньше кода</li>
             <li class="next">Легче шарить логику (кастомные хуки)</li>
             <li class="next">Меньше головной боли c методами ЖЦ</li>
+            <li class="next">Гибкая оптимизация</li>
             <li class="next">Новые библиотеки чаще выходят с использованием хуков</li>
-        </ol>
+        </ul>
     </section>
 
     <section class="slide">
@@ -53,11 +46,7 @@
 
         <div class="columns two">
             <pre class="next">
-                <code class="language-js">
-// Container
-import React from "react";
-import CommentList from "./CommentList";
-
+                <code class="language-js fz12">
 class CommentListContainer extends React.Component {
   state = { comments: [] }
 
@@ -74,10 +63,7 @@ class CommentListContainer extends React.Component {
                 </code>
             </pre>
             <pre class="next">
-                <code class="language-js">
-// View
-import React from "react";
-
+                <code class="language-js fz12">
 const Commentlist = comments => (
   &lt;ul&gt;
     {comments.map(({ body, author }) =>
@@ -91,7 +77,7 @@ const Commentlist = comments => (
     </section>
 
     <section class="slide">
-        <div>Теперь</div>
+        <h2>Теперь</h2>
         <pre>
             <code class="language-js">
 const AvailableСount = ({count, theme, alreadyRegistered}) =&gt; {
@@ -116,9 +102,9 @@ const AvailableСount = ({count, theme, alreadyRegistered}) =&gt; {
         </pre>
     </section>
 
-    <section class="slide">
-        <h3 style="text-align: center">Функциональные компоненты фиксируют значения, необходимые для рендера</h3>
-        <small><em>sandbox</em></small>
+    <section class="slide block-center">
+        <h3>Функциональные компоненты фиксируют значения, необходимые для рендера</h3>
+        <span>(sandbox example)</span>
     </section>
 
     <section class="slide">
@@ -128,29 +114,7 @@ const AvailableСount = ({count, theme, alreadyRegistered}) =&gt; {
             <img class="next" style="object-fit: contain; max-width: 500px; margin: 0;" src="./images/buildFunction.png" alt="">
         </div>
     </section>
-
-    <section class="slide">
-        <h2>Правила хуков</h2>
-        <ol>
-            <li class="next">
-                Использовать только на верхнем уровне
-                <div>
-                    <small><em>Не использовать внутри циклов, условных операторов или вложенных функций.</em></small>
-                </div>
-            </li>
-
-            <li class="next">
-                Вызывайте хуки только из React-функций
-                <div>
-                    <small><em>Из функционального компонента React.</em></small>
-                </div>
-                <div>
-                    <small><em>Из пользовательского хука</em></small>
-                </div>
-            </li>
-        </ol>
-    </section>
-
+<!--    Нативные хуки-->
     <section class="slide">
         <h2>Нативные хуки</h2>
         <div class="columns two">
@@ -172,14 +136,12 @@ const AvailableСount = ({count, theme, alreadyRegistered}) =&gt; {
     </section>
 
     <section class="slide">
-        <h2>useState</h2>
-        <h3>Хук состояния</h3>
-        <pre>
-                <code>
+        <h2>useState - хук состояния</h2>
+<pre>
+<code class="fz16">
 const Example: FC = () => {
     // Объявление новой переменной состояния «count»
     <mark>const [count, setCount] = useState&lt;number>(0)</mark>
-
     return (
         &lt;div>
             &lt;p>Вы кликнули {count} раз(а)&lt;/p>
@@ -189,22 +151,347 @@ const Example: FC = () => {
         &lt;/div>
     );
 }
-                </code>
-            </pre>
+</code>
+</pre>
     </section>
 
     <section class="slide">
-        <h2>useEffect</h2>
-        <h3>Хук эффекта</h3>
-        <pre>
-            <code>
+        <h2>Разделение состояния</h2>
+        <pre><code class="fz16">
+const Example = () => {
+    const [data, setData] = useState&lt;Array>([]);
+    const [loading, setLoading] = useState&lt;boolean>(true);
+    const [error, setError] = useState&lt;string>('');
 
+    return (
+        ...
+    )
+}
+        </code></pre>
+    </section>
+
+    <section class="slide">
+        <h2>Объединение в одном</h2>
+        <pre><code class="fz16">
+const Example = () => {
+    const [state, setState] = useState({
+        email: '',
+        password: '',
+        isPasswordVisible: false
+    });
+
+    return (
+        ...
+    )
+}
+        </code></pre>
+    </section>
+
+    <section class="slide">
+        <h2>Отличие от this.setState</h2>
+        <p>не объединяет объекты обновления автоматически</p>
+        <pre><code class="fz16" style="background: #f0f0f0;">
+setState(prevState => {
+    // Object.assign также будет работать
+    return {...prevState, ...updatedValues};
+});
+        </code></pre>
+    </section>
+
+    <section class="slide">
+        <h2>useContext</h2>
+        <pre><code class="fz16">
+<mark>import { ThemeContext } from './context';</mark>
+
+const ThemedButton = () => {
+    const theme = useContext(<mark>ThemeContext</mark>);
+    return (
+        &lt;button style={{ background: theme.background }}>
+          Я стилизован темой из контекста!
+        &lt;/button>
+    );
+}
+        </code></pre>
+    </section>
+
+    <section class="slide">
+        <h2>useRef</h2>
+        <pre><code class="fz16">
+const TextInput = () => {
+  <mark>const inputRef = useRef&lt;HTMLInputElement>(null);</mark>
+  const handleChange = () => {
+    // `current` указывает на смонтированный элемент `input`
+    console.log(inputRef.current.value);
+  };
+  return (
+      &lt;input <mark>ref={inputRef}</mark> type="text" onChange={handleChange} />
+  );
+}
+        </code></pre>
+    </section>
+
+    <section class="slide">
+        <h2>useReducer</h2>
+        <div class="columns two">
+            <pre class="next"><code>
+function init(initialCount) {
+  return {count: initialCount};
+}
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'increment':
+      return {count: state.count + 1};
+    case 'decrement':
+      return {count: state.count - 1};
+    case 'reset':
+      return init(action.payload);
+    default:
+      throw new Error();
+  }
+}
+            </code></pre>
+            <pre class="next"><code class="fz12">
+const Counter = ({initialCount}) => {
+    <mark>const [state, dispatch] = useReducer(reducer, initialCount, init);</mark>
+    return (
+        &lt;>
+            Count: {state.count}
+            &lt;button onClick={() => <mark>dispatch({type: 'reset', payload: initialCount})}</mark>>
+                Reset
+            &lt;/button>
+            &lt;button onClick={() => <mark>dispatch({type: 'decrement'})</mark>}>-&lt;/button>
+            &lt;button onClick={() => <mark>dispatch({type: 'increment'})</mark>}>+&lt;/button>
+        &lt;/>
+    );
+}
+            </code></pre>
+        </div>
+    </section>
+
+    <section class="slide">
+        <h2>useCallback</h2>
+        <small>Назначение:</small>
+        <pre><code class="fz12">
+function add() {
+  return (a, b) => a + b;
+}
+
+const sum1 = add();
+const sum2 = add();
+
+sum1(1, 2); // => 3
+sum2(1, 2); // => 3
+
+sum1 === sum2; // => false
+sum1 === sum1; // => true
+        </code></pre>
+    </section>
+
+    <section class="slide">
+        <h3>Коллбек сохраняется между рендерами до тех пор, пока не изменятся его зависимости</h3>
+        <p style="font-size: 16px;">Хорошее применение - оборачивать колбеки, которые необходимы для передачи множественным дочерним компонентам</p>
+
+    </section>
+
+    <section class="slide">
+        <h4 style="margin-bottom: 0;">Good:</h4>
+        <pre><code class="next fz14">
+const Parent = ({ term }) => {
+    const handleClick = <mark>useCallback</mark>(event => {
+        console.log('click on element: ', event.currentTarget);
+    }, [term]); // подписка на изменение term
+
+    return (
+        <mark>&lt;MyBigList</mark>
+            term={term}
+            onItemClick={handleClick}
+        />
+    );
+}
+        </code></pre>
+    </section>
+
+    <section class="slide">
+        <h4 style="margin-bottom: 0;">Bad:</h4>
+            <pre><code class="next fz14" style="margin-bottom: 0;">
+const Parent = () => {
+    const handleClick = <mark>useCallback</mark>(() => {
+        // ...
+    }, []);
+
+    return <mark>&lt;SingleChild onClick={handleClick} /></mark>;
+}
+        </code></pre>
+        <small class="next">В таком случае, оптимизация обойдется дороже, чем ее отсутствие</small>
+    </section>
+
+    <section class="slide">
+        <h2>useMemo</h2>
+        <div class="next">
+            <small>Возвращает мемоизированное значение.</small>
+            <div><small>Позволяет избегать повторных сложных вычислений чего-либо.</small></div>
+        </div>
+    </section>
+
+    <section class="slide" style="padding-top: 0;">
+        <pre>
+            <code class="fz14">
+const MemoComponent = () => {
+    const [num, setNum] = useState(1);
+    const [isGreen, setIsGreen] = useState(true);
+    <mark>const result = sum(num);</mark> // => 1 + 1
+    return (
+        &lt;div>
+            &lt;h1 onClick={() => setIsGreen(!isGreen)}
+            style={{ color: isGreen ? "green" : "red" }}
+            >
+                Example
+            &lt;/h1>
+            &lt;h2>
+                Sum {result}
+            &lt;/h2>
+            &lt;button onClick={() => setNum(num + 1)}>➕&lt;/button>
+        &lt;/div>
+    );
+};
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide" style="padding-top: 0;">
+        <pre>
+            <code class="fz14">
+const MemoComponent = () => {
+    const [num, setNum] = useState(1);
+    const [isGreen, setIsGreen] = useState(true);
+    <mark>const result = useMemo(() => sum(num), [sum]);</mark>
+    // значение не высчитывается заново, при смене другого состояния
+    return (
+        &lt;div>
+            &lt;h1 onClick={() => setIsGreen(!isGreen)}
+            style={{ color: isGreen ? "green" : "red" }}
+            >
+                Example
+            &lt;/h1>
+            &lt;h2>
+                Sum {result}
+            &lt;/h2>
+            &lt;button onClick={() => setNum(num + 1)}>➕&lt;/button>
+        &lt;/div>
+    );
+};
+            </code>
+        </pre>
+    </section>
+
+<!--    useEffect-->
+    <section class="slide">
+        <h2>useEffect - хук эффекта</h2>
+        <pre>
+            <code class="fz12">
+const Counter = () => {
+    const [count, setCount] = useState(0);
+    useEffect(() => {
+        document.title = `You clicked <mark>${count}</mark> times`;
+    });
+    return (
+        &lt;div>
+            &lt;p>You clicked {count} times&lt;/p>
+            &lt;button onClick={() => setCount(count + 1)}>
+                Click me
+            &lt;/button>
+        &lt;/div>
+    );
+}
             </code>
         </pre>
     </section>
 
     <section class="slide">
-        <h2>То, что не поддерживается</h2>
+        <!--        <img class="cover" style="width: 100%; height: 100%; object-fit: contain;" src="https://i.gifer.com/PSSd.gif" alt="">-->
+        <img class="cover" style="width: 100%; height: 100%; object-fit: contain;" src="https://i.gifer.com/OpkC.gif" alt="">
+    </section>
+
+    <section class="slide block-center">
+        <h3>Каждому рендеру принадлежит свой эффект</h3>
+        <span>(sandbox example)</span>
+    </section>
+
+    <section class="slide">
+        <h2>Функция очистки</h2>
+        <pre>
+            <code class="fz16">
+useEffect(() => {
+    ChatAPI.subscribeToFriendStatus(props.id, handleStatusChange);
+    <mark>return () => {</mark>
+      <mark>ChatAPI.unsubscribeFromFriendStatus(props.id, handleStatusChange);</mark>
+    <mark>};</mark>
+});
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide">
+        <img class="cover" src="./images/useeffect2.jpg_large.png" alt="">
+    </section>
+
+    <section class="slide">
+        <h2>Зависимости</h2>
+        <div>@TODO</div>
+    </section>
+
+    <section class="slide">
+        <img style="width: 100%" src="./images/useEffect.png" alt="">
+    </section>
+
+    <section class="slide">
+        <h2>useLayoutEffect</h2>
+        <div class="columns two">
+            <div>
+                <small>useEffect</small>
+                <ul style="font-size: 14px;">
+                    <li class="next">вы собираетесь отрендерить что-либо</li>
+                    <li class="next">React рендерит компонент</li>
+                    <li class="next">Браузер перерисовал</li>
+                    <li class="next"><mark>ПОТОМ</mark> запускается useEffect (не блокирует отрисовку)</li>
+                </ul>
+            </div>
+            <div>
+                <small>useLayoutEffect</small>
+                <ul style="font-size: 14px;">
+                    <li class="next">вы собираетесь отрендерить что-либо</li>
+                    <li class="next">React рендерит компонент</li>
+                    <li class="next">useLayoutEffect запускается, и реакт <mark>ЖДЕТ</mark> его завершения</li>
+                    <li class="next"><mark>ПОТОМ</mark> - браузер перерисовывает</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <h2>Правила хуков</h2>
+        <ol>
+            <li class="next">
+                Можно использовать только на верхнем уровне
+                <div>
+                    <small><em>Не использовать внутри циклов, условных операторов или вложенных функций.</em></small>
+                </div>
+            </li>
+
+            <li class="next">
+                Вызывайте хуки только из React-функций
+                <ul>
+                    <li><small><em>Из функционального компонента React.</em></small></li>
+                    <li><small><em>Из пользовательского хука</em></small></li>
+                </ul>
+            </li>
+        </ol>
+    </section>
+
+<!--    Не поддерживается-->
+    <section class="slide">
+        <h2>Не поддерживается</h2>
         <pre><code style="font-size: 14px;">componentDidCatch(error, info)</code></pre>
         <p>Этот метод жизненного цикла вызывается после возникновения ошибки у компонента-потомка. В нем можно использовать побочные эффекты.</p>
         <p>Например для логирования ошибок (sentry) или смены состояния и отрисовки запасного ui</p>
@@ -216,9 +503,9 @@ const Example: FC = () => {
         <p>Он получает ошибку в качестве параметра и возвращает значение для обновления состояния. </p>
     </section>
 
-    <section class="slide">
+    <section class="slide" style="padding: 0px 80px;">
         <pre>
-            <code style="font-size: 10px;">
+            <code class="fz12">
 class DefaultLayout extends Component {
     state = {
         hasError: false,
@@ -234,9 +521,9 @@ class DefaultLayout extends Component {
         return (
             ...
             {this.state.hasError ? (
-                &lg;ErrorMessageElement>
+                &lt;ErrorMessageElement>
                     {this.state.errorMessage}
-                &lg;/ErrorMessageElement>
+                &lt;/ErrorMessageElement>
             ) : (
                 children
             )}
@@ -245,6 +532,250 @@ class DefaultLayout extends Component {
 }
             </code>
         </pre>
+    </section>
+
+<!--    БИБЛИОТЕКИ-->
+    <section class="slide block-center">
+        <h2>Библиотеки</h2>
+    </section>
+
+    <section class="slide">
+        <h2 class="title-logo">
+            <img style="width: 40px; margin-right: 10px;" src="./images/mobx.png" alt="">
+            mobx-react-lite
+        </h2>
+        <pre>
+            <code class="next fz14">
+class Timer {
+    secondsPassed = 0
+
+    constructor() {
+        makeAutoObservable(this)
+    }
+
+    increaseTimer() {
+        this.secondsPassed += 1
+    }
+}
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide">
+        <h2>Дополнительные фичи в mobx-react:</h2>
+        <ul>
+            <li class="next">поддержка классовых компонентов</li>
+            <li class="next"><mark>Provider</mark> и <mark>Inject</mark> - самописный createContext от MobX, в котором больше нет нужды</li>
+            <li class="next">Observable propTypes</li>
+        </ul>
+    </section>
+
+    <section class="slide">
+        <h2>Через пропсы</h2>
+        <pre>
+            <code class="fz14">
+import { observer } from "mobx-react-lite"
+
+<mark>const myTimer = new Timer()</mark> // стор
+
+const TimerContainer = observer(() => {
+    return &lt;TimerView timer={<mark>myTimer</mark>} />
+}
+
+const TimerView = observer(({ timer }) => (
+    <span>Seconds passed: {timer.secondsPassed}</span>
+)
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide">
+        <h2>Глобальные переменные</h2>
+        <pre>
+            <code class="fz14">
+export const myTimer = new Timer() // стор
+
+// Уже без пропсов, импортируем синглтон
+const TimerView = observer(() => &lt;span>Seconds passed: {myTimer.secondsPassed}&lt;/span>)
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide">
+        <h2>Контекст 🔥</h2>
+
+        <div class="columns two">
+            <div>
+<pre><code class="next fz14">export const StoreContext = createContext();</code></pre>
+
+<pre>
+    <code class="next fz14">// создаем значение контекста (readonly)
+const <mark>contextValue</mark> = {
+    store1: new Store1(),
+    ...
+    storeN: new StoreN()
+}
+    </code>
+</pre>
+<pre>
+    <code class="next fz14">&lt;StoreContext.Provider value={<mark>contextValue</mark>}>
+    &lt;SomeChild />
+    &lt;SomeChild />
+&lt;/StoreContext.Provider>
+    </code>
+</pre>
+            </div>
+            <div class="next">
+<pre>
+    <code class="fz12">const SomeChild = observer(() => {
+    // забираем то, что нам нужно.
+    <mark>const { store1, store4 } = useContext(StoreContext)</mark>
+    return (
+        ...
+    )
+})
+    </code>
+</pre>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide block-center">
+        <h2>Оптимизация</h2>
+    </section>
+
+    <section class="slide">
+        <h3>Используйте много мелких компонентов</h3>
+        <p>Компоненты будут отслеживать все используемые значения и повторно визуализировать, если какое-либо из них изменится. </p>
+            <p>Таким образом, чем меньше ваши компоненты, тем меньше изменений, которые они должны отрендерить.</p>
+    </section>
+
+    <section class="slide">
+        <h3>Вывод списка в отдельном компоненте</h3>
+        <div class="columns two">
+<pre>
+    <code class="fz12">
+const MyComponent = observer(({ todos, user }) => (
+    &lt;div>
+        {<mark style="background: #f0f0f0">user.name</mark>} // подписка на user
+        &lt;TodosView todos={<mark>todos</mark>} /> // подписка на todos
+    &lt;/div>
+))
+    </code>
+</pre>
+<pre>
+    <code class="fz12">
+const TodosView = observer(({ todos }) => (
+    &lt;ul>
+        {todos.map(todo => (
+            &lt;TodoView todo={todo} key={todo.id} />
+        ))}
+    &lt;/ul>
+))
+    </code>
+</pre>
+        </div>
+    </section>
+
+    <section class="slide">
+        <h3>Не используйте индексы массивов в качестве key</h3>
+        <p>Если список обновится - изменятся ключи айтемов</p>
+        <small class="next"><em>Именно этот момент позволяет ререндерить компоненты изолированно от других</em></small>
+    </section>
+
+    <section class="slide">
+        <h3>Деструктуризация - как можно позже</h3>
+        <small>Медленнее:</small>
+        <mark style="background: #f0f0f0; display: block;padding: 5px;">&lt;DisplayName name={person.name} /></mark>
+        <br />
+        <small>Быстрее:</small>
+        <mark style="background: #f0f0f0; display: block;padding: 5px;">&lt;DisplayName name={person} /></mark>
+    </section>
+
+    <section class="slide">
+        <h2 class="title-logo">
+            <svg style="width: 30px;padding: 8px;margin-right: 10px; background: #ec5990; border-radius: 12px" viewBox="0 0 100 100"><path d="M73.56,13.32H58.14a8.54,8.54,0,0,0-16.27,0H26.44a11,11,0,0,0-11,11V81.63a11,11,0,0,0,11,11H73.56a11,11,0,0,0,11-11V24.32A11,11,0,0,0,73.56,13.32Zm-30.92,2a1,1,0,0,0,1-.79,6.54,6.54,0,0,1,12.78,0,1,1,0,0,0,1,.79h5.38v6.55a3,3,0,0,1-3,3H40.25a3,3,0,0,1-3-3V15.32ZM82.56,81.63a9,9,0,0,1-9,9H26.44a9,9,0,0,1-9-9V24.32a9,9,0,0,1,9-9h8.81v6.55a5,5,0,0,0,5,5h19.5a5,5,0,0,0,5-5V15.32h8.81a9,9,0,0,1,9,9Z"></path><path d="M71.6,45.92H54a1,1,0,0,0,0,2H71.6a1,1,0,0,0,0-2Z" style="transform: translateX(-25px);"></path><path d="M71.6,45.92H54a1,1,0,0,0,0,2H71.6a1,1,0,0,0,0-2Z"></path><path d="M71.1,69.49H53.45a1,1,0,1,0,0,2H71.1a1,1,0,0,0,0-2Z" style="transform: translateX(-25px);"></path><path d="M71.1,69.49H53.45a1,1,0,1,0,0,2H71.1a1,1,0,0,0,0-2Z"></path></svg>
+            react-hook-form 🔥
+        </h2>
+        <pre>
+            <code class="fz12">
+import { useForm } from "react-hook-form";
+
+const Form = () => {
+    <mark>const { register, handleSubmit } = useForm();</mark>
+    const onSubmit = data => console.log(data);
+    return (
+        &lt;form onSubmit={<mark>handleSubmit(onSubmit)</mark>}>
+            &lt;input name="firstName" ref={register} />
+            &lt;select name="gender" ref={register}>
+                &lt;option value="female">female&lt;/option>
+                &lt;option value="male">male&lt;/option>
+            &lt;/select>
+            &lt;input type="submit" />
+        &lt;/form>
+    );
+}
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide" style="padding-top: 0;">
+        <div class="columns two">
+            <div>
+                <small>Количество ререндеров: <b>30+</b></small>
+                <video controls="" autoplay="" playsinline="" loop="">
+                    <source src="https://react-hook-form.com/static/formik-test.min-194dbde067b6a682f99d9b001043affe.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div>
+                <small>Количество ререндеров: <b>3</b></small>
+                <video controls="" autoplay="" playsinline="" loop="">
+                    <source src="https://react-hook-form.com/static/react-hook-form-test.min-3a501f8a008bf1280b6252acbecc0e41.mp4" type="video/mp4">
+                </video>
+            </div>
+        </div>
+    </section>
+    
+    <section class="slide">
+        <h2 class="title-logo">
+            <img src="./images/react-query.svg" alt="" style="width: 40px; margin-right: 10px;">
+            react-query
+        </h2>
+        <h3>Хуки для взаимодействия с запросами</h3>
+        <ul>
+            <li>data fetching</li>
+            <li>параллельные + зависимые запросы</li>
+            <li>кеширование запросов + refetching</li>
+            <li>пауза/остановка/повтор запроса</li>
+        </ul>
+    </section>
+
+<!--    Experimental-->
+    <section class="slide block-center">
+        <h2 style="color: #fff; font-weight: 900;text-shadow: 3px 5px #000;">Experimental features</h2>
+        <img class="cover" style="height: 100%;object-fit:cover;" src="./images/background-gif.gif" alt="">
+    </section>
+
+    <section class="slide">
+        <img style="width:auto;height: 450px;object-fit: contain;" src="./images/suspense.png" alt="">
+    </section>
+
+    <section class="slide">
+        <h2>Concurrent</h2>
+        <p>@TODO</p>
+    </section>
+
+    <section class="slide">
+        <h2>ООП</h2>
+        <ul>
+            <li class="next">базовые знания, основанные на понимании КК позволяют легче перейти к ФК, и прочувствовать разницу</li>
+            <li class="next">поддержка старых проектов</li>
+            <li class="next">логику сторов все равно пишем на классах</li>
+        </ul>
+    </section>
+
+    <section class="slide block-center">
+        <h2>The End 🎣 </h2>
     </section>
 
     <div class="progress"></div>
