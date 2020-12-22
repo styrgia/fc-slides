@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 class ProfilePage extends Component {
     showMessage = () => {
-        alert('Подписались на ' + this.props.user)
+        alert('Подписались на юзера: ' + this.props.user);
     }
 
     handleClick = () => {

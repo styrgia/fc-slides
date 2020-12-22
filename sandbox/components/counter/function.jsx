@@ -5,7 +5,7 @@ const FunctionExample = () => {
 
     useEffect(() => {
         setTimeout(() => {
-            console.log(`You clicked ${count} times`);
+            console.log(`%cYou clicked ${count} times`, 'font-size: 20px');
         }, 3000);
     });
 

@@ -7,13 +7,13 @@ class ClassExample extends Component {
 
     componentDidMount() {
         setTimeout(() => {
-            console.log(`You clicked ${this.state.count} times`);
+            console.log(`%cYou clicked ${this.state.count} times`, 'font-size: 20px');
         }, 3000);
     }
 
     componentDidUpdate() {
         setTimeout(() => {
-            console.log(`You clicked ${this.state.count} times`);
+            console.log(`%cYou clicked ${this.state.count} times`, 'font-size: 20px');
         }, 3000);
     }
 

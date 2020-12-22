@@ -2,7 +2,7 @@ import React from 'react'
 
 const ProfilePage = (props) => {
     const showMessage = () => {
-        alert('Подписались на' + props.user);
+        alert('Подписались на юзера: ' + props.user);
     }
 
     const handleClick = () => {

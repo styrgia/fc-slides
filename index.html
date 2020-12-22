@@ -33,8 +33,8 @@
     <section class="slide">
         <h2>Мотивация</h2>
         <ul>
-            <li class="next">Меньше кода</li>
-            <li class="next">Легче шарить логику (кастомные хуки)</li>
+            <li class="next">Меньше вложенность дерева</li>
+            <li class="next">Легче шарить логику, повышение модульности</li>
             <li class="next">Меньше головной боли c методами ЖЦ</li>
             <li class="next">Гибкая оптимизация</li>
             <li class="next">Новые библиотеки чаще выходят с использованием хуков</li>
@@ -173,8 +173,8 @@ const Example = () => {
     <section class="slide">
         <h2>Объединение в одном</h2>
         <pre><code class="fz16">
-const Example = () => {
-    const [state, setState] = useState({
+const Example: FC = () => {
+    const [state, setState] = useState&lt;IState>({
         email: '',
         password: '',
         isPasswordVisible: false
@@ -273,12 +273,12 @@ const Counter = ({initialCount}) => {
         <h2>useCallback</h2>
         <small>Назначение:</small>
         <pre><code class="fz12">
-function add() {
+function addFactory() {
   return (a, b) => a + b;
 }
 
-const sum1 = add();
-const sum2 = add();
+const sum1 = addFactory();
+const sum2 = addFactory();
 
 sum1(1, 2); // => 3
 sum2(1, 2); // => 3
@@ -365,7 +365,7 @@ const MemoComponent = () => {
 const MemoComponent = () => {
     const [num, setNum] = useState(1);
     const [isGreen, setIsGreen] = useState(true);
-    <mark>const result = useMemo(() => sum(num), [sum]);</mark>
+    <mark>const result = useMemo(() => sum(num), [num]);</mark>
     // значение не высчитывается заново, при смене другого состояния
     return (
         &lt;div>
@@ -409,7 +409,6 @@ const Counter = () => {
     </section>
 
     <section class="slide">
-        <!--        <img class="cover" style="width: 100%; height: 100%; object-fit: contain;" src="https://i.gifer.com/PSSd.gif" alt="">-->
         <img class="cover" style="width: 100%; height: 100%; object-fit: contain;" src="https://i.gifer.com/OpkC.gif" alt="">
     </section>
 
@@ -436,15 +435,133 @@ useEffect(() => {
         <img class="cover" src="./images/useeffect2.jpg_large.png" alt="">
     </section>
 
-    <section class="slide">
-        <h2>Зависимости</h2>
-        <div>@TODO</div>
+    <section class="slide block-center">
+        <h2>Зависимости в useEffect</h2>
     </section>
 
     <section class="slide">
-        <img style="width: 100%" src="./images/useEffect.png" alt="">
+        <pre><code class="fz14">const Greeting = ({ <mark>name</mark> }) => {
+  <mark>const [counter, setCounter] = useState(0);</mark>
+
+  useEffect(() => {
+    document.title = 'Hello, ' + name;
+  });
+  return (
+    &lt;h1 className="Greeting">
+      Hello, {name}
+      &lt;button onClick={() => setCounter(counter + 1)}>
+        Increment
+        &lt;/button>
+    &lt;/h1>
+  );
+}
+        </code></pre>
+    </section>
+    
+    <section class="slide">
+        <h4>Может ли React увидеть то, что эти функции делают одно и то же?</h4>
+        <pre><code class="fz16" style="background: #f0f0f0;">
+        let oldEffect = () => { document.title = 'Hello, Dan'; };
+        let newEffect = () => { document.title = 'Hello, Dan'; };
+        </code></pre>
+        <p class="next">Нет. React не может догадаться о том, что именно делает функция, не вызывая её.</p>
     </section>
 
+    <section class="slide">
+        <pre><code class="fz16" style="background: #f0f0f0;">
+    useEffect(() => {
+        document.title = 'Hello, ' + name;
+    }, [name]); // Наши зависимости
+        </code></pre>
+        <p class="next">Слушай, я понимаю, что внутрь этой функции ты заглянуть не можешь, но я обещаю, что буду использовать только name и ничего другого из области видимости рендера</p>
+    </section>
+
+    <section class="slide">
+        <pre><code class="fz16">
+const SearchResults = () => {
+    const [query, setQuery] = useState('');
+    const [data, setData] = useState([]);
+
+    const fetchData = async () => {
+        const result = await axios('/api/v1/search?query=' + query);
+        setData(result.data);
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+    ...
+}
+        </code></pre>
+    </section>
+
+    <section class="slide">
+        <pre><code class="fz16">
+const SearchResults = () => {
+    const [query, setQuery] = useState('');
+
+    const getFetchUrl = useCallback(() => {
+        return '/api/v1/search?query=' + query;
+    }, [query]);  // Зависимости коллбэка в порядке
+
+    useEffect(() => {
+        const url = getFetchUrl();
+        // ... Загрузим данные и что-то с ними сделаем
+    }, [getFetchUrl]); // Зависимости эффекта в порядке.
+}
+        </code></pre>
+    </section>
+
+    <section class="slide block-center">
+        <h2>Единая ответственность</h2>
+    </section>
+
+    <section class="slide">
+        <small><b>Bad:</b></small>
+        <pre><code class="fz12">const Example = (props) => {
+    const location = useLocation();
+
+    const fetchData = useCallback(() => {
+        /*  Calling the api */
+    }, []);
+
+    const updateBreadcrumbs = useCallback(() => {
+        /* Updating the breadcrumbs*/
+    }, []);
+
+    useEffect(() => {
+        fetchData();
+        updateBreadcrumbs();
+    }, <mark>[location.pathname, fetchData, updateBreadcrumbs]</mark>);
+    ...
+}
+        </code></pre>
+    </section>
+
+    <section class="slide">
+        <small><b>Good:</b></small>
+        <pre><code class="fz12">const Example = (props) => {
+    const location = useLocation();
+
+    const fetchData = useCallback(() => { ... }, []);
+
+    const updateBreadcrumbs = useCallback(() => { ... }, []);
+
+    useEffect(() => {
+        updateBreadcrumbs();
+    }, <mark>[location.pathname, updateBreadcrumbs]</mark>);
+
+    useEffect(() => {
+        fetchData();
+    }, <mark>[fetchData]</mark>);
+
+    ...
+}
+
+        </code></pre>
+    </section>
+
+<!--    useLayoutEffect -->
     <section class="slide">
         <h2>useLayoutEffect</h2>
         <div class="columns two">
@@ -467,6 +584,10 @@ useEffect(() => {
                 </ul>
             </div>
         </div>
+    </section>
+
+    <section class="slide block-center">
+        <h2>Пользовательские хуки</h2>
     </section>
 
     <section class="slide">
@@ -757,12 +878,29 @@ const Form = () => {
     </section>
 
     <section class="slide">
+        <h2>Concurrent</h2>
+        <ul>
+            <li>В конкурентном режиме React может работать с несколькими обновлениями состояния одновременно</li>
+            <li>Блокирующие операции внутри React превращаются в асинхронные за счёт переключения на Fiber</li>
+        </ul>
+    </section>
+
+    <section class="slide">
         <img style="width:auto;height: 450px;object-fit: contain;" src="./images/suspense.png" alt="">
     </section>
 
     <section class="slide">
-        <h2>Concurrent</h2>
-        <p>@TODO</p>
+        <pre><code class="fz16">return (
+    &lt;Suspense fallback={&lt;h1>Loading user...&lt;/h1>}>
+        &lt;User resource={resource} />
+        &lt;ErrorBoundary fallback={&lt;h2>Could not fetch posts&lt;/h2>}>
+            &lt;Suspense fallback={&lt;h1>Loading posts...&lt;/h1>}>
+                &lt;Posts resource={resource} />
+            &lt;/Suspense>
+        &lt;/ErrorBoundary>
+    &lt;/Suspense>
+)
+        </code></pre>
     </section>
 
     <section class="slide">
