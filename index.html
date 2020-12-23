@@ -587,7 +587,144 @@ const SearchResults = () => {
     </section>
 
     <section class="slide block-center">
-        <h2>Пользовательские хуки</h2>
+        <h2>Custom hooks</h2>
+    </section>
+
+    <section class="slide">
+        <h2>Претензии к HOC</h2>
+        <ul>
+            <li class="next">Много оберток, становится сложнее с этим разобраться</li>
+            <li class="next">Можно ошибиться с последовательностью</li>
+            <li class="next">Не очевидно, от какого HOC какие props получает компонент</li>
+            <li class="next">Коллизия ключей props. При передаче props от родителей одинаковые ключи могут быть перезаписаны значениями из HOC.</li>
+        </ul>
+    </section>
+
+    <section class="slide">
+        <h2>Custom hooks</h2>
+        <ul>
+            <li class="next">Названия всегда начинаются с "use"</li>
+            <li class="next">Каждый вызов хука получает свое изолированное состояние</li>
+        </ul>
+    </section>
+
+    <section class="slide block-center">
+        <h2>Утилиты</h2>
+    </section>
+
+    <section class="slide">
+        <h3>usePrevious</h3>
+        <div class="columns two">
+            <pre><code class="fz14">const App = () => {
+    const [count, setCount] = useState(0);
+    <mark>const prevCount = usePrevious(count);</mark>
+    return ...
+}</code></pre>
+
+            <pre><code class="fz14">const usePrevious = (value) => {
+    const ref = useRef();
+
+    useEffect(() => {
+        ref.current = value;
+    }, [value]);
+
+    return ref.current;
+}
+            </code></pre>
+        </div>
+    </section>
+
+    <section class="slide">
+        <h3>useInterval</h3>
+        <div class="columns two">
+            <pre><code class="fz14">const [count, setCount] = useState&lt;number>(0);
+
+<mark>useInterval(() => {</mark>
+    setCount(count + 1)
+}, isPlaying ? delay : null)
+// Задержка или null, чтобы остановить
+            </code></pre>
+
+            <pre><code>function useInterval(callback: () => void, delay: number | null) {
+    const savedCallback = useRef<() => void | null>()
+    // Remember the latest callback.
+    useEffect(() => {
+        savedCallback.current = callback
+    })
+    useEffect(() => {
+        function tick() {
+          if (typeof savedCallback?.current !== 'undefined') {
+            savedCallback?.current()
+          }
+        }
+        if (delay !== null) {
+          const id = setInterval(tick, delay)
+          return () => clearInterval(id)
+        }
+    }, [delay])
+}
+        </code></pre>
+        </div>
+    </section>
+
+    <section class="slide">
+        <h3>useFeatureToggle</h3>
+        <pre><code class="fz14">function useFeatureToggle(flagName, flagVariation = true) {
+    const flags = React.useContext(FlagsContext)
+    const isFeatureEnabled = getIsFeatureEnabled(flagName, flagVariation)(flags)
+
+    React.useDebugValue({
+        flagName,
+        flagVariation,
+        isEnabled: isFeatureEnabled
+    })
+
+    return isFeatureEnabled
+}
+        </code></pre>
+    </section>
+
+    <section class="slide">
+        <h3>useDebounce</h3>
+        <pre><code class="fz14">const debouncedValue = useDebounce&lt;string>(value, 500);
+
+useEffect(() => {
+    // обращение к апи
+}, [debouncedValue])
+        </code></pre>
+
+    </section>
+
+    <section class="slide">
+        <pre><code class="fz14">function useDebounce&lt;T>(value: T, delay?: number): T {
+  const [debouncedValue, setDebouncedValue] = useState&lt;T>(value)
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay)
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [value, delay || 500])
+  return debouncedValue
+}</code></pre>
+    </section>
+
+    <section class="slide">
+        <h2>Используйте воображение</h2>
+        <div class="columns two">
+            <ul>
+                <li class="next">useMyStore</li>
+                <li class="next">useMyCustomModal</li>
+                <li class="next">useAuthRedirect</li>
+                <li class="next">useGoogleAnalytics</li>
+            </ul>
+            <ul>
+                <li class="next">useMultipleFiles</li>
+                <li class="next">useAxios / useFetch</li>
+                <li class="next">useTabs</li>
+                <li class="next">useLottieAnimation</li>
+                <li class="next">и так далее</li>
+            </ul>
+        </div>
     </section>
 
     <section class="slide">
@@ -613,13 +750,19 @@ const SearchResults = () => {
 <!--    Не поддерживается-->
     <section class="slide">
         <h2>Не поддерживается</h2>
-        <pre><code style="font-size: 14px;">componentDidCatch(error, info)</code></pre>
-        <p>Этот метод жизненного цикла вызывается после возникновения ошибки у компонента-потомка. В нем можно использовать побочные эффекты.</p>
-        <p>Например для логирования ошибок (sentry) или смены состояния и отрисовки запасного ui</p>
+        <pre><code class="fz16 next" style="background: #f0f0f0;">
+componentDidCatch(error, info)
+        </code></pre>
+        <div class="next">
+            <p>Этот метод жизненного цикла вызывается после возникновения ошибки у компонента-потомка. В нем можно использовать побочные эффекты.</p>
+            <p>Например для логирования ошибок (sentry) или смены состояния и отрисовки запасного ui</p>
+        </div>
     </section>
 
     <section class="slide">
-        <pre><code style="font-size: 14px;">static getDerivedStateFromError()</code></pre>
+        <pre><code style="font-size: 18px; background: #f0f0f0;">
+static getDerivedStateFromError()
+        </code></pre>
         <p>Вызывается после возникновения ошибки у компонента-родителя.</p>
         <p>Он получает ошибку в качестве параметра и возвращает значение для обновления состояния. </p>
     </section>
@@ -879,10 +1022,16 @@ const Form = () => {
 
     <section class="slide">
         <h2>Concurrent</h2>
-        <ul>
-            <li>В конкурентном режиме React может работать с несколькими обновлениями состояния одновременно</li>
-            <li>Блокирующие операции внутри React превращаются в асинхронные за счёт переключения на Fiber</li>
-        </ul>
+        <div class="columns fz16">
+            <ul>
+                <li>В конкурентном режиме React может работать с несколькими обновлениями состояния одновременно</li>
+                <li>Блокирующие операции внутри React превращаются в асинхронные за счёт переключения на Fiber</li>
+                </ul>
+            <ul class="next">
+                <li>Для обновлений с привязкой к ЦПУ (таких как создание узлов DOM и запуск кода компонента) конкурентность означает, что более срочное обновление может «прервать» уже начатую визуализацию.</li>
+                <li>Для обновлений с привязкой к вводу-выводу (таких как извлечение кода или данных из сети) конкурентность означает, что React может начать визуализацию в памяти ещё до того, как все данные поступят, и пропустить показ состояний загрузки.</li>
+            </ul>
+        </div>
     </section>
 
     <section class="slide">
