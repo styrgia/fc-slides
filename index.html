@@ -25,7 +25,7 @@
         <ul>
             <li class="next">Желание уместить большую логику в компонент</li>
             <li class="next">Со временем компоненты становятся трудными для понимания</li>
-            <li class="next">Тяжело переиспользовать логику</li>
+            <li class="next">Тяжело переиспользовать</li>
             <li class="next">THIS</li>
         </ul>
     </section>
@@ -64,7 +64,7 @@ class CommentListContainer extends React.Component {
             </pre>
             <pre class="next">
                 <code class="language-js fz12">
-const Commentlist = comments => (
+const CommentList = comments => (
   &lt;ul&gt;
     {comments.map(({ body, author }) =>
       &lt;li&gt;{body}-{author}&lt;/li&gt;
@@ -104,7 +104,6 @@ const AvailableСount = ({count, theme, alreadyRegistered}) =&gt; {
 
     <section class="slide block-center">
         <h3>Функциональные компоненты фиксируют значения, необходимые для рендера</h3>
-        <span>(sandbox example)</span>
     </section>
 
     <section class="slide">
@@ -798,6 +797,10 @@ class DefaultLayout extends Component {
         </pre>
     </section>
 
+    <section class="slide block-center">
+        <h2 style="color: red;">Bad examples</h2>
+    </section>
+
 <!--    БИБЛИОТЕКИ-->
     <section class="slide block-center">
         <h2>Библиотеки</h2>
@@ -988,13 +991,13 @@ const Form = () => {
             <div>
                 <small>Количество ререндеров: <b>30+</b></small>
                 <video controls="" autoplay="" playsinline="" loop="">
-                    <source src="https://react-hook-form.com/static/formik-test.min-194dbde067b6a682f99d9b001043affe.mp4" type="video/mp4">
+                    <source src="./images/formik-test.min-194dbde067b6a682f99d9b001043affe.mp4" type="video/mp4">
                 </video>
             </div>
             <div>
                 <small>Количество ререндеров: <b>3</b></small>
                 <video controls="" autoplay="" playsinline="" loop="">
-                    <source src="https://react-hook-form.com/static/react-hook-form-test.min-3a501f8a008bf1280b6252acbecc0e41.mp4" type="video/mp4">
+                    <source src="./images/react-hook-form-test.min-3a501f8a008bf1280b6252acbecc0e41.mp4" type="video/mp4">
                 </video>
             </div>
         </div>

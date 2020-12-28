@@ -6,14 +6,16 @@ class ClassExample extends Component {
     };
 
     componentDidMount() {
+        const { count } = this.state;
         setTimeout(() => {
-            console.log(`%cYou clicked ${this.state.count} times`, 'font-size: 20px');
+            console.log(`%cYou clicked ${count} times`, 'font-size: 20px');
         }, 3000);
     }
 
     componentDidUpdate() {
+        const { count } = this.state;
         setTimeout(() => {
-            console.log(`%cYou clicked ${this.state.count} times`, 'font-size: 20px');
+            console.log(`%cYou clicked ${count} times`, 'font-size: 20px');
         }, 3000);
     }
 

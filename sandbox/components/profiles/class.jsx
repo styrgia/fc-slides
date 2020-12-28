@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
 
-class ProfilePage extends Component {
-    showMessage = () => {
+const ProfilePage = () => {
+    const showMessage = () => {
         alert('Подписались на юзера: ' + this.props.user);
     }
 
-    handleClick = () => {
-        setTimeout(this.showMessage, 5000);
+    const handleClick = () => {
+        setTimeout(showMessage, 5000);
     }
 
-    render() {
-        return <button onClick={this.handleClick}>Подписаться</button>;
-    }
+    return <button onClick={handleClick}>Подписаться</button>;
 }
 
 export default ProfilePage;
